@@ -1,0 +1,52 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/operationsAgents/definition/1.0.0/schema.json",
+  "configuration": {
+    "instructions": "*** Operational Instructions ***\n1. Alert when \u0022InteractiveDelayPct\u0022 crosses above 90 for any capacity in table sig_capacity_health.\n2. Alert when \u0022BackgroundRejectionPct\u0022 crosses above 80 for any capacity in table sig_capacity_health.\n3. Alert when \u0022CapacityState\u0022 becomes \u0022Overloaded\u0022 in table sig_capacity_state.\n4. When alerting, recommend only the \u0022Notify capacity admin\u0022 action. Do not recommend any action that changes a capacity or workspace.\n*** Semantic Instructions ***\n1. Each capacity is identified by \u0022CapacityId\u0022 in sig_capacity_health and sig_capacity_state.\n2. \u0022InteractiveDelayPct\u0022 above 100 means users already see throttling; 90 is an early warning.\n3. \u0022BackgroundRejectionPct\u0022 above 100 means background jobs are rejected.\n4. The items loading a capacity right now are in sig_capacity_operations: rows for that \u0022CapacityId\u0022 with \u0022WindowEndUtc\u0022 later than now, summed by \u0022ItemId\u0022 on \u0022CapacityUnitMs\u0022. Name the top items in the alert. All capacity data is real time.",
+    "dataSources": {
+      "kql_ops": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "type": "KustoDatabase",
+        "workspaceId": "16c5b45f-b48f-449f-ad26-8fbd79f55c3f"
+      }
+    },
+    "actions": {
+      "00000000-0000-0000-0000-000000000000": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "displayName": "Notify capacity admin",
+        "description": "Sends a notification about the capacity alert to the capacity admin. Notification only; makes no change to the capacity. Runs a Power Automate flow through the act_ops_notify Activator.",
+        "kind": "PowerAutomateAction",
+        "parameters": [
+          {
+            "name": "CapacityId",
+            "description": "CapacityId of the capacity in the alert"
+          },
+          {
+            "name": "CapacityName",
+            "description": "CapacityName of the capacity in the alert"
+          },
+          {
+            "name": "CapacitySku",
+            "description": "CapacitySku of the capacity in the alert"
+          },
+          {
+            "name": "AlertType",
+            "description": "InteractiveDelay, BackgroundRejection or Overloaded"
+          },
+          {
+            "name": "Value",
+            "description": "The value that triggered the alert, for example InteractiveDelayPct"
+          }
+        ]
+      }
+    },
+    "messageDestination": {
+      "kind": "Recipient",
+      "kind": "Recipient",
+      "recipient": "admin@M365x13431207.onmicrosoft.com"
+    },
+    "identity": {
+      "sponsor": "admin@M365x13431207.onmicrosoft.com"
+    }
+  },
+  "shouldRun": false
+}

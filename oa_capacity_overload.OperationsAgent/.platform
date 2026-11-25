@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "OperationsAgent",
+    "displayName": "oa_capacity_overload",
+    "description": "Watches live capacity utilisation and state; alerts capacity admins and recommends one mitigation."
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "2b527fc8-a1eb-95cd-42d4-75b7cc0cbd5e"
+  }
+}
