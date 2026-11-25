@@ -1,0 +1,55 @@
+[
+  {
+    "uniqueIdentifier": "a151a070-72f8-4c68-a974-fd1d3a259957",
+    "payload": {
+      "name": "Notify capacity admin",
+      "parameters": [
+        {
+          "key": "CapacityId"
+        },
+        {
+          "key": "CapacityName"
+        },
+        {
+          "key": "CapacitySku"
+        },
+        {
+          "key": "AlertType"
+        },
+        {
+          "key": "Value"
+        }
+      ]
+    },
+    "type": "powerAutomateFlowAction-v1"
+  },
+  {
+    "uniqueIdentifier": "30962163-7dc4-437e-b01e-bb8a2eb64c79",
+    "payload": {
+      "name": "Email owner about stale items",
+      "parameters": [
+        {
+          "key": "OwnerUpn"
+        },
+        {
+          "key": "WorkspaceName"
+        },
+        {
+          "key": "ItemList"
+        },
+        {
+          "key": "NewlyStaleCount"
+        }
+      ]
+    },
+    "type": "powerAutomateFlowAction-v1"
+  },
+  {
+    "uniqueIdentifier": "9e07402b-62e0-442d-9731-fbdf028f1efb",
+    "payload": {
+      "name": "test_power_automate",
+      "parameters": []
+    },
+    "type": "powerAutomateFlowAction-v1"
+  }
+]

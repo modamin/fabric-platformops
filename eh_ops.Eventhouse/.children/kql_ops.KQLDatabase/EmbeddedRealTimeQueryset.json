@@ -1,0 +1,28 @@
+{
+  "queryset": {
+    "version": "1.0.0",
+    "dataSources": [
+      {
+        "id": "ea021b54-66ba-4da3-b491-5daba35aceb9",
+        "clusterUri": "https://trd-mbcxfuw6b92p52j3u2.z9.kusto.fabric.microsoft.com",
+        "type": "Fabric",
+        "databaseItemId": "b29b2425-69dc-4a90-bcc6-a56d8c912b5c"
+      }
+    ],
+    "tabs": [
+      {
+        "id": "8d9ec8b9-e0c0-4628-9c15-1c667cd46491",
+        "content": "let Capacity =\n  ['sig_capacity_health']\n  // Apply time window on the natural snapshot end time\n  | project\n      Id = ['CapacityId'],\n      Timestamp = ['WindowEndUtc'],\n      BackgroundRejectionPct = ['BackgroundRejectionPct'],\n      CapacityId = ['CapacityId'],\n      CapacityName = ['CapacityName'],\n      CapacitySku = ['CapacitySku'];\nCapacity",
+        "title": "Tab",
+        "dataSourceId": "ea021b54-66ba-4da3-b491-5daba35aceb9"
+      },
+      {
+        "id": "63aee037-12c5-4e01-870a-2b78c4abe456",
+        "content": "let WorkspaceOwnerStaleItems =\n  ['sig_stale_items'] \n  // Use SnapshotUtc as the evaluation run timestamp; no additional filters beyond upstream population.\n  | project\n      Id = strcat(['WorkspaceId'], \"||\", ['OwnerUpn']),\n      Timestamp = ['SnapshotUtc'],\n      NewlyStaleCount = ['NewlyStaleCount'],\n      OwnerUpn = ['OwnerUpn'],\n      WorkspaceName = ['WorkspaceName'],\n      ItemList = ['ItemList'];\nWorkspaceOwnerStaleItems",
+        "title": "",
+        "dataSourceId": "ea021b54-66ba-4da3-b491-5daba35aceb9"
+      }
+    ],
+    "querysetType": "Embedded"
+  }
+}

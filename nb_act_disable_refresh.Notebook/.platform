@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "nb_act_disable_refresh",
+    "description": ""
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "9b7afe0d-dd07-ac4f-4059-394cc2b4b3ec"
+  }
+}

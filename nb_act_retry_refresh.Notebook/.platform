@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "nb_act_retry_refresh",
+    "description": ""
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "47227cd6-09ce-ac24-42d6-847b7f753efa"
+  }
+}

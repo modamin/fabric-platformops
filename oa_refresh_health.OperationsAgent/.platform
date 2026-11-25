@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "OperationsAgent",
+    "displayName": "oa_refresh_health",
+    "description": "Watches failing or unusually slow semantic model refreshes (from FUAM); retries, disables schedules or opens tickets with approval."
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "e2886b75-3899-bddc-460e-d2fff15c0ca9"
+  }
+}

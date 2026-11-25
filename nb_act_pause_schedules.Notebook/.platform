@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "nb_act_pause_schedules",
+    "description": ""
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "629e5383-4ce4-a5ea-4b87-e79b786df303"
+  }
+}

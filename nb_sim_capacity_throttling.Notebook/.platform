@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "nb_sim_capacity_throttling",
+    "description": ""
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "295d71c3-614f-b0f5-45f1-da11335e7ffa"
+  }
+}

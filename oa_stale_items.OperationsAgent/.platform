@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "OperationsAgent",
+    "displayName": "oa_stale_items",
+    "description": "Finds items unused for 90+ days (from FUAM); notifies owners and tags items as stale-candidate. Never deletes."
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "2a419ee8-df06-aba6-4615-8fdfeeea4942"
+  }
+}

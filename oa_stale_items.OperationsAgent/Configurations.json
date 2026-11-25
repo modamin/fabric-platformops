@@ -1,0 +1,303 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/operationsAgents/definition/1.0.0/schema.json",
+  "configuration": {
+    "instructions": "*** Operational Instructions ***\n1. Notify when \u0022NewlyStaleCount\u0022 is above 0 in table sig_stale_items.\n2.Alert: recommend email the owner about stale items in \u0022OwnerUpn\u0022 with \u0022ItemList\u0022. Never recommend deletion.\n*** Semantic Instructions ***\n1. Each row is one workspace and owner, identified by \u0022WorkspaceId\u0022 and \u0022OwnerUpn\u0022.\n2. \u0022NewlyStaleCount\u0022 is the number of items that passed 90 days without use since the previous run.\n3. \u0022OldestDaysInactive\u0022 is the longest inactivity in days among those items.",
+    "dataSources": {
+      "kql_ops": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "type": "KustoDatabase",
+        "workspaceId": "16c5b45f-b48f-449f-ad26-8fbd79f55c3f"
+      }
+    },
+    "actions": {
+      "00000000-0000-0000-0000-000000000000": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "displayName": "Email owner about stale items",
+        "description": "Emails the owner the list of unused items with a 30-day notice to reply \u0027keep\u0027.",
+        "kind": "PowerAutomateAction",
+        "parameters": [
+          {
+            "name": "OwnerUpn",
+            "description": "OwnerUpn from sig_stale_items"
+          },
+          {
+            "name": "WorkspaceName",
+            "description": "WorkspaceName from sig_stale_items"
+          },
+          {
+            "name": "ItemList",
+            "description": "ItemList from sig_stale_items"
+          },
+          {
+            "name": "NewlyStaleCount",
+            "description": "NewlyStaleCount from sig_stale_items"
+          }
+        ]
+      }
+    }
+  },
+  "playbook": {
+    "OntologyDefinitions": {
+      "WorkspaceOwnerStaleItems__notify_workspace_owner_newly_stale_items": {
+        "$type": "class",
+        "IRI": "WorkspaceOwnerStaleItems",
+        "DocumentId": "",
+        "Name": "WorkspaceOwnerStaleItems",
+        "Description": "One row per workspace-owner per evaluation run from sig_stale_items, carrying newly stale item counts and metadata for that workspace-owner.",
+        "DataLink": {
+          "$type": "kustogroundingtable",
+          "TableName": "sig_stale_items"
+        }
+      },
+      "WorkspaceOwnerStaleItems__notify_workspace_owner_newly_stale_items.Timestamp": {
+        "$type": "data",
+        "IRI": "Timestamp",
+        "DocumentId": "",
+        "Name": "Timestamp",
+        "Description": "Evaluation run timestamp for the workspace-owner snapshot, sourced from sig_stale_items.SnapshotUtc.",
+        "DomainClassIRI": "WorkspaceOwnerStaleItems",
+        "RangeDataType": "datetime",
+        "Kind": 2,
+        "DataLink": {
+          "$type": "kustogroundingcol",
+          "ColumnName": "SnapshotUtc"
+        }
+      },
+      "WorkspaceOwnerStaleItems__notify_workspace_owner_newly_stale_items.NewlyStaleCount": {
+        "$type": "data",
+        "IRI": "NewlyStaleCount",
+        "DocumentId": "",
+        "Name": "NewlyStaleCount",
+        "Description": "Count of items that became stale since the previous run for this workspace-owner, sourced from sig_stale_items.NewlyStaleCount.",
+        "DomainClassIRI": "WorkspaceOwnerStaleItems",
+        "RangeDataType": "long",
+        "Kind": 1,
+        "DataLink": {
+          "$type": "kustogroundingcol",
+          "ColumnName": "NewlyStaleCount"
+        }
+      },
+      "WorkspaceOwnerStaleItems__notify_workspace_owner_newly_stale_items.OwnerUpn": {
+        "$type": "data",
+        "IRI": "OwnerUpn",
+        "DocumentId": "",
+        "Name": "OwnerUpn",
+        "Description": "User principal name of the workspace owner to notify about newly stale items, sourced from sig_stale_items.OwnerUpn.",
+        "DomainClassIRI": "WorkspaceOwnerStaleItems",
+        "RangeDataType": "string",
+        "Kind": 1,
+        "DataLink": {
+          "$type": "kustogroundingcol",
+          "ColumnName": "OwnerUpn"
+        }
+      },
+      "WorkspaceOwnerStaleItems__notify_workspace_owner_newly_stale_items.WorkspaceName": {
+        "$type": "data",
+        "IRI": "WorkspaceName",
+        "DocumentId": "",
+        "Name": "WorkspaceName",
+        "Description": "Display name of the workspace whose items have newly become stale, sourced from sig_stale_items.WorkspaceName.",
+        "DomainClassIRI": "WorkspaceOwnerStaleItems",
+        "RangeDataType": "string",
+        "Kind": 1,
+        "DataLink": {
+          "$type": "kustogroundingcol",
+          "ColumnName": "WorkspaceName"
+        }
+      },
+      "WorkspaceOwnerStaleItems__notify_workspace_owner_newly_stale_items.ItemList": {
+        "$type": "data",
+        "IRI": "ItemList",
+        "DocumentId": "",
+        "Name": "ItemList",
+        "Description": "List of items that have newly become stale for this workspace-owner, sourced from sig_stale_items.ItemList.",
+        "DomainClassIRI": "WorkspaceOwnerStaleItems",
+        "RangeDataType": "dynamic",
+        "Kind": 1,
+        "DataLink": {
+          "$type": "kustogroundingcol",
+          "ColumnName": "ItemList"
+        }
+      },
+      "WorkspaceOwnerStaleItems__notify_workspace_owner_newly_stale_items.Id": {
+        "$type": "data",
+        "IRI": "Id",
+        "DocumentId": "",
+        "Name": "Id",
+        "Description": "Workspace-owner identifier for the snapshot, derived by concatenating WorkspaceId and OwnerUpn with \u0027||\u0027.",
+        "DomainClassIRI": "WorkspaceOwnerStaleItems",
+        "RangeDataType": "string",
+        "Kind": 0,
+        "DataLink": {
+          "$type": "kustogroundingsnippet",
+          "Snippet": "strcat(WorkspaceId, \u0027||\u0027, OwnerUpn)"
+        }
+      }
+    },
+    "RuleDefinitions": {
+      "47abfc17-7099-45b7-8152-3f7860dbadd7": {
+        "Id": "47abfc17-7099-45b7-8152-3f7860dbadd7",
+        "Name": "Notify Workspace Owner Newly Stale Items",
+        "Description": "Notify the workspace owner when any items have newly become stale since the previous run, based on NewlyStaleCount in sig_stale_items, and email them a list of those stale items without recommending deletion.",
+        "ClassExpression": {
+          "$type": "kqldataquery",
+          "Expression": "// WorkspaceOwnerStaleItems materialization: one row per workspace-owner per evaluation run from sig_stale_items.\ndeclare query_parameters(startTime:datetime, endTime:datetime);\nlet WorkspaceOwnerStaleItems =\n    [\u0027sig_stale_items\u0027] | where [\u0027SnapshotUtc\u0027] between (startTime .. endTime)\n    // Use SnapshotUtc as the evaluation run timestamp; no additional filters beyond upstream population.\n    | project\n        Id = strcat([\u0027WorkspaceId\u0027], \u0022||\u0022, [\u0027OwnerUpn\u0027]),\n        Timestamp = [\u0027SnapshotUtc\u0027],\n        NewlyStaleCount = [\u0027NewlyStaleCount\u0027],\n        OwnerUpn = [\u0027OwnerUpn\u0027],\n        WorkspaceName = [\u0027WorkspaceName\u0027],\n        ItemList = [\u0027ItemList\u0027];\nWorkspaceOwnerStaleItems",
+          "Description": "Notify the workspace owner when any items have newly become stale since the previous run, based on NewlyStaleCount in sig_stale_items, and email them a list of those stale items without recommending deletion.",
+          "ProjectedColumns": [
+            "Id",
+            "Timestamp",
+            "NewlyStaleCount",
+            "OwnerUpn",
+            "WorkspaceName",
+            "ItemList"
+          ],
+          "TriggerType": 0,
+          "RcaSource": {
+            "$type": "kqlrcasource",
+            "SourceTable": "sig_stale_items"
+          },
+          "ChartTemplate": {
+            "$type": "kqlcharttemplate",
+            "ValueField": "NewlyStaleCount",
+            "TemplateEnvelope": "\u003Cchart_template rule_id=\u002247abfc17-7099-45b7-8152-3f7860dbadd7\u0022 value_field=\u0022NewlyStaleCount\u0022 trigger_type=\u0022AttributeTrigger\u0022\u003E\u003Cquery\u003E\u003C![CDATA[declare query_parameters(instanceId:string, startTime:datetime, endTime:datetime);\r\nlet WorkspaceOwnerStaleItems =\r\n    [\u0027sig_stale_items\u0027]\r\n    | extend Id = strcat([\u0027WorkspaceId\u0027], \u0022||\u0022, [\u0027OwnerUpn\u0027])\r\n    | where Id == instanceId\r\n    | where [\u0027SnapshotUtc\u0027] between (startTime .. endTime)\r\n    | project\r\n        Timestamp = [\u0027SnapshotUtc\u0027],\r\n        NewlyStaleCount = [\u0027NewlyStaleCount\u0027];\r\nWorkspaceOwnerStaleItems\r\n| project Timestamp, Value = NewlyStaleCount]]\u003E\u003C/query\u003E\u003C/chart_template\u003E"
+          }
+        },
+        "RuleCondition": {
+          "$type": "propertywhenisabove",
+          "DataPropertyName": "NewlyStaleCount",
+          "Threshold": 0
+        },
+        "ActionBinding": {
+          "$type": "actionbinding",
+          "Name": "Email owner about stale items",
+          "Description": "Emails the owner the list of unused items with a 30-day notice to reply \u0027keep\u0027.",
+          "ActionId": "notify_owners",
+          "ParameterBindings": [
+            {
+              "$type": "parameterbindingcontextkey",
+              "Name": "OwnerUpn",
+              "Key": "agent:operationalSet:WorkspaceOwnerStaleItems:OwnerUpn",
+              "Description": "OwnerUpn identifying the workspace owner to email about newly stale items."
+            },
+            {
+              "$type": "parameterbindingcontextkey",
+              "Name": "WorkspaceName",
+              "Key": "agent:operationalSet:WorkspaceOwnerStaleItems:WorkspaceName",
+              "Description": "WorkspaceName of the workspace whose items have newly become stale."
+            },
+            {
+              "$type": "parameterbindingcontextkey",
+              "Name": "ItemList",
+              "Key": "agent:operationalSet:WorkspaceOwnerStaleItems:ItemList",
+              "Description": "ItemList containing the unused items that have newly become stale for this workspace-owner."
+            },
+            {
+              "$type": "parameterbindingcontextkey",
+              "Name": "NewlyStaleCount",
+              "Key": "agent:operationalSet:WorkspaceOwnerStaleItems:NewlyStaleCount",
+              "Description": "NewlyStaleCount giving the number of items that became stale since the previous run."
+            }
+          ]
+        },
+        "LocalOntology": {
+          "WorkspaceOwnerStaleItems": {
+            "$type": "class",
+            "IRI": "WorkspaceOwnerStaleItems",
+            "DocumentId": "",
+            "Name": "WorkspaceOwnerStaleItems",
+            "Description": "One row per workspace-owner per evaluation run from sig_stale_items, carrying newly stale item counts and metadata for that workspace-owner.",
+            "DataLink": {
+              "$type": "kustogroundingtable",
+              "TableName": "sig_stale_items"
+            }
+          },
+          "Timestamp": {
+            "$type": "data",
+            "IRI": "Timestamp",
+            "DocumentId": "",
+            "Name": "Timestamp",
+            "Description": "Evaluation run timestamp for the workspace-owner snapshot, sourced from sig_stale_items.SnapshotUtc.",
+            "DomainClassIRI": "WorkspaceOwnerStaleItems",
+            "RangeDataType": "datetime",
+            "Kind": 2,
+            "DataLink": {
+              "$type": "kustogroundingcol",
+              "ColumnName": "SnapshotUtc"
+            }
+          },
+          "NewlyStaleCount": {
+            "$type": "data",
+            "IRI": "NewlyStaleCount",
+            "DocumentId": "",
+            "Name": "NewlyStaleCount",
+            "Description": "Count of items that became stale since the previous run for this workspace-owner, sourced from sig_stale_items.NewlyStaleCount.",
+            "DomainClassIRI": "WorkspaceOwnerStaleItems",
+            "RangeDataType": "long",
+            "Kind": 1,
+            "DataLink": {
+              "$type": "kustogroundingcol",
+              "ColumnName": "NewlyStaleCount"
+            }
+          },
+          "OwnerUpn": {
+            "$type": "data",
+            "IRI": "OwnerUpn",
+            "DocumentId": "",
+            "Name": "OwnerUpn",
+            "Description": "User principal name of the workspace owner to notify about newly stale items, sourced from sig_stale_items.OwnerUpn.",
+            "DomainClassIRI": "WorkspaceOwnerStaleItems",
+            "RangeDataType": "string",
+            "Kind": 1,
+            "DataLink": {
+              "$type": "kustogroundingcol",
+              "ColumnName": "OwnerUpn"
+            }
+          },
+          "WorkspaceName": {
+            "$type": "data",
+            "IRI": "WorkspaceName",
+            "DocumentId": "",
+            "Name": "WorkspaceName",
+            "Description": "Display name of the workspace whose items have newly become stale, sourced from sig_stale_items.WorkspaceName.",
+            "DomainClassIRI": "WorkspaceOwnerStaleItems",
+            "RangeDataType": "string",
+            "Kind": 1,
+            "DataLink": {
+              "$type": "kustogroundingcol",
+              "ColumnName": "WorkspaceName"
+            }
+          },
+          "ItemList": {
+            "$type": "data",
+            "IRI": "ItemList",
+            "DocumentId": "",
+            "Name": "ItemList",
+            "Description": "List of items that have newly become stale for this workspace-owner, sourced from sig_stale_items.ItemList.",
+            "DomainClassIRI": "WorkspaceOwnerStaleItems",
+            "RangeDataType": "dynamic",
+            "Kind": 1,
+            "DataLink": {
+              "$type": "kustogroundingcol",
+              "ColumnName": "ItemList"
+            }
+          },
+          "Id": {
+            "$type": "data",
+            "IRI": "Id",
+            "DocumentId": "",
+            "Name": "Id",
+            "Description": "Workspace-owner identifier for the snapshot, derived by concatenating WorkspaceId and OwnerUpn with \u0027||\u0027.",
+            "DomainClassIRI": "WorkspaceOwnerStaleItems",
+            "RangeDataType": "string",
+            "Kind": 0,
+            "DataLink": {
+              "$type": "kustogroundingsnippet",
+              "Snippet": "strcat(WorkspaceId, \u0027||\u0027, OwnerUpn)"
+            }
+          }
+        }
+      }
+    }
+  },
+  "shouldRun": true
+}

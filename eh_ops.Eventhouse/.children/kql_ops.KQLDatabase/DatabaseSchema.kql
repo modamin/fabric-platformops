@@ -1,0 +1,90 @@
+// KQL script
+// Use management commands in this script to configure your database items, such as tables, functions, materialized views, and more.
+
+
+.create-merge table raw_capacity_events (Payload:dynamic) with (docstring = "Raw Real-Time hub capacity events (Microsoft.Fabric.Capacity.Summary, .State and Microsoft.Fabric.CapacityOperationEvents.Operation) written by eventstream es_capacity_events. Not read by agents.") 
+.create-or-alter table raw_capacity_events ingestion json mapping 'raw_capacity_events_json'
+```
+[{"Properties":{"Path":"$"},"column":"Payload","datatype":""}]
+```
+.create-merge table sig_capacity_health (CapacityId:string, CapacityName:string, CapacitySku:string, Region:string, WindowStartUtc:datetime, WindowEndUtc:datetime, UtilizationPct:real, InteractiveDelayPct:real, InteractiveRejectionPct:real, BackgroundRejectionPct:real, OverageTotalCUms:real) with (docstring = "One row per capacity per 30-second window with smoothed capacity utilisation. Duplicates are possible.") 
+.create-merge table sig_capacity_state (CapacityId:string, CapacityName:string, CapacitySku:string, TransitionUtc:datetime, CapacityState:string, StateChangeReason:string) with (docstring = "One row per capacity state change (for example Overloaded, Paused, Active).") 
+.create-merge table ctx_top_items_by_cu (SnapshotUtc:datetime, CapacityId:string, Rank:int, WorkspaceId:string, WorkspaceName:string, ItemId:string, ItemName:string, ItemKind:string, OperationName:string, CUSeconds:real, SharePct:real) with (docstring = "RETIRED, no longer populated. Do not use. Use sig_capacity_operations for the current top CU consumers.") 
+.create-merge table sig_stale_items (SnapshotUtc:datetime, WorkspaceId:string, WorkspaceName:string, OwnerUpn:string, NewlyStaleCount:int, OldestDaysInactive:int, ItemTypes:string, ItemList:string, ItemIds:string, RecommendedAction:string) with (docstring = "Event table: one row per workspace and owner when items newly pass the inactivity threshold. Each row is a new event.") 
+.create-merge table sig_refresh_health (SnapshotUtc:datetime, WorkspaceId:string, WorkspaceName:string, SemanticModelId:string, SemanticModelName:string, OwnerUpn:string, SignalType:string, ConsecutiveFailures:int, LastRefreshStatus:string, LastErrorMessage:string, LastDurationMin:real, BaselineDurationMin:real, DurationVsBaselinePct:real) with (docstring = "Event table: one row when a semantic model newly reaches the failure threshold or has a new slow refresh.") 
+.create-merge table ops_heartbeat (RunUtc:datetime, Env:string, FuamLatestDataUtc:datetime, RowsStale:int, RowsRefresh:int, RowsTopItems:int, Status:string, Message:string) with (docstring = "One row per nb_build_signals run (FUAM signals UC2/UC3). Status OK, FuamStale or Failed. RowsTopItems is retired and always 0.") 
+.create-merge table ops_action_audit (RunUtc:datetime, Action:string, DryRun:bool, Target:string, Parameters:dynamic, Result:string, HttpStatus:int, CorrelationId:string) with (docstring = "One row per action run, including dry runs and rejected requests.") 
+.create-merge table sig_capacity_operations (CapacityId:string, CapacityName:string, WorkspaceId:string, WorkspaceName:string, ItemId:string, ItemName:string, ItemKind:string, OperationName:string, OperationId:string, UtilizationType:string, Status:string, OperationStartUtc:datetime, WindowStartUtc:datetime, WindowEndUtc:datetime, CapacityUnitMs:real, DurationMs:long, ThrottlingDelayMs:long) with (docstring = "One row per Fabric operation that consumed capacity units, in near real time. To find which items are loading a capacity now, keep rows with WindowEndUtc > now() (their smoothed CU still counts), deduplicate by OperationId, then sum CapacityUnitMs by ItemId.") 
+.create-or-alter function with (folder = "update_policies", docstring = "Flattens capacity Summary events", skipvalidation = "true") fn_flatten_capacity_summary() {
+    raw_capacity_events
+    | extend Type = tostring(Payload.type)
+    | extend d = iff(isempty(tostring(Payload.data)), Payload, Payload.data)
+    | where Type == "Microsoft.Fabric.Capacity.Summary" or (isempty(Type) and isnotempty(tostring(d.baseCapacityUnits)))
+    | extend BaseCU = todouble(d.baseCapacityUnits), CUms = todouble(d.capacityUnitMs)
+    | project
+        CapacityId = tolower(tostring(d.capacityId)),
+        CapacityName = tostring(d.capacityName),
+        CapacitySku = tostring(d.capacitySku),
+        Region = tostring(d.capacityRegion),
+        WindowStartUtc = todatetime(d.windowStartTime),
+        WindowEndUtc = todatetime(d.windowEndTime),
+        UtilizationPct = iff(BaseCU > 0, CUms / (BaseCU * 1000.0 * 30.0) * 100.0, real(null)),
+        InteractiveDelayPct = todouble(d.interactiveDelayThresholdPercentage),
+        InteractiveRejectionPct = todouble(d.interactiveRejectionThresholdPercentage),
+        BackgroundRejectionPct = todouble(d.backgroundRejectionThresholdPercentage),
+        OverageTotalCUms = todouble(d.overageTotalCapacityUnitMs)
+    | where isnull(UtilizationPct) or UtilizationPct <= 500
+}
+.create-or-alter function with (folder = "update_policies", docstring = "Flattens capacity State events", skipvalidation = "true") fn_flatten_capacity_state() {
+    raw_capacity_events
+    | extend Type = tostring(Payload.type)
+    | extend d = iff(isempty(tostring(Payload.data)), Payload, Payload.data)
+    | where Type == "Microsoft.Fabric.Capacity.State" or (isempty(Type) and isnotempty(tostring(d.capacityState)))
+    | project
+        CapacityId = tolower(tostring(d.capacityId)),
+        CapacityName = tostring(d.capacityName),
+        CapacitySku = tostring(d.capacitySku),
+        TransitionUtc = todatetime(d.transitionTime),
+        CapacityState = tostring(d.capacityState),
+        StateChangeReason = tostring(d.stateChangeReason)
+}
+.create-or-alter function with (folder = "views", docstring = "sig_capacity_health without duplicate events", skipvalidation = "true") v_capacity_health_dedup() {
+    sig_capacity_health
+    | summarize take_any(*) by CapacityId, WindowStartUtc
+}
+.create-or-alter function with (folder = "update_policies", docstring = "Flattens capacity Operation events", skipvalidation = "true") fn_flatten_capacity_operation() {
+    raw_capacity_events
+    | extend Type = tostring(Payload.type)
+    | extend d = iff(isempty(tostring(Payload.data)), Payload, Payload.data)
+    | where Type == "Microsoft.Fabric.CapacityOperationEvents.Operation" or (isempty(Type) and isnotempty(tostring(d.operationId)))
+    | project
+        CapacityId = tolower(tostring(d.capacityId)),
+        CapacityName = tostring(d.capacityName),
+        WorkspaceId = tolower(tostring(d.workspaceId)),
+        WorkspaceName = tostring(d.workspaceName),
+        ItemId = tolower(tostring(d.itemId)),
+        ItemName = tostring(d.itemName),
+        ItemKind = tostring(d.itemKind),
+        OperationName = tostring(d.operationName),
+        OperationId = tostring(d.operationId),
+        UtilizationType = tostring(d.utilizationType),
+        Status = tostring(d.status),
+        OperationStartUtc = todatetime(d.operationStartTime),
+        WindowStartUtc = todatetime(d.windowStartTime),
+        WindowEndUtc = todatetime(d.windowEndTime),
+        CapacityUnitMs = todouble(d.capacityUnitMs),
+        DurationMs = tolong(d.durationMs),
+        ThrottlingDelayMs = tolong(d.throttlingDelayMs)
+}
+.alter table raw_capacity_events policy retention @'{"SoftDeletePeriod":"7.00:00:00","Recoverability":"Disabled"}'
+.alter table sig_capacity_health policy retention @'{"SoftDeletePeriod":"90.00:00:00","Recoverability":"Enabled"}'
+.alter table sig_capacity_state policy retention @'{"SoftDeletePeriod":"90.00:00:00","Recoverability":"Enabled"}'
+.alter table ctx_top_items_by_cu policy retention @'{"SoftDeletePeriod":"365.00:00:00","Recoverability":"Enabled"}'
+.alter table sig_stale_items policy retention @'{"SoftDeletePeriod":"365.00:00:00","Recoverability":"Enabled"}'
+.alter table sig_refresh_health policy retention @'{"SoftDeletePeriod":"365.00:00:00","Recoverability":"Enabled"}'
+.alter table ops_heartbeat policy retention @'{"SoftDeletePeriod":"365.00:00:00","Recoverability":"Enabled"}'
+.alter table ops_action_audit policy retention @'{"SoftDeletePeriod":"730.00:00:00","Recoverability":"Enabled"}'
+.alter table sig_capacity_operations policy retention @'{"SoftDeletePeriod":"30.00:00:00","Recoverability":"Enabled"}'
+.alter table sig_capacity_health policy update "[{\"IsEnabled\":true,\"Source\":\"raw_capacity_events\",\"Query\":\"fn_flatten_capacity_summary()\",\"IsTransactional\":false,\"PropagateIngestionProperties\":false,\"ManagedIdentity\":null}]"
+.alter table sig_capacity_state policy update "[{\"IsEnabled\":true,\"Source\":\"raw_capacity_events\",\"Query\":\"fn_flatten_capacity_state()\",\"IsTransactional\":false,\"PropagateIngestionProperties\":false,\"ManagedIdentity\":null}]"
+.alter table sig_capacity_operations policy update "[{\"IsEnabled\":true,\"Source\":\"raw_capacity_events\",\"Query\":\"fn_flatten_capacity_operation()\",\"IsTransactional\":false,\"PropagateIngestionProperties\":false,\"ManagedIdentity\":null}]"

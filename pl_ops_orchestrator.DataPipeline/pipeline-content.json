@@ -1,0 +1,29 @@
+{
+  "properties": {
+    "description": "Runs nb_build_signals after the FUAM load (plan WP5). Schedule it 60 minutes after the FUAM orchestration pipeline.",
+    "activities": [
+      {
+        "type": "TridentNotebook",
+        "typeProperties": {
+          "notebookId": "7f08a9ca-013b-98ca-489f-1f670f094ab4",
+          "workspaceId": "00000000-0000-0000-0000-000000000000",
+          "parameters": {
+            "ENV": {
+              "value": "dev",
+              "type": "string"
+            }
+          }
+        },
+        "policy": {
+          "timeout": "0.02:00:00",
+          "retry": 1,
+          "retryIntervalInSeconds": 300,
+          "secureInput": false,
+          "secureOutput": false
+        },
+        "name": "Build signals",
+        "dependsOn": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Notebook",
+    "displayName": "nb_sim_refresh_health",
+    "description": ""
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "2ebc71ac-911b-96f6-4977-73f37d809a35"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/operationsAgents/definition/1.0.0/schema.json",
+  "configuration": {
+    "instructions": "*** Operational Instructions ***\n1. Alert when \u0022ConsecutiveFailures\u0022 is above 2 in table sig_refresh_health.\n2. Alert when \u0022DurationVsBaselinePct\u0022 is above 200 in table sig_refresh_health.\n3. For failures recommend: retry the refresh once; if \u0022ConsecutiveFailures\u0022 is above 4, recommend disabling the refresh schedule and opening a ticket.\n4. For slow refreshes recommend opening a ticket only.\n*** Semantic Instructions ***\n1. Each semantic model is identified by \u0022SemanticModelId\u0022.\n2. \u0022LastErrorMessage\u0022 is the error of the latest failed refresh.\n3. \u0022BaselineDurationMin\u0022 is the median successful refresh duration over the last 14 days.",
+    "dataSources": {
+      "kql_ops": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "type": "KustoDatabase",
+        "workspaceId": "16c5b45f-b48f-449f-ad26-8fbd79f55c3f"
+      }
+    },
+    "actions": {
+      "00000000-0000-0000-0000-000000000000": {
+        "id": "00000000-0000-0000-0000-000000000000",
+        "displayName": "Open ITSM ticket",
+        "description": "Opens an ITSM ticket with the model, error and owner.",
+        "kind": "PowerAutomateAction",
+        "parameters": [
+          {
+            "name": "SemanticModelName",
+            "description": "SemanticModelName from sig_refresh_health"
+          },
+          {
+            "name": "WorkspaceName",
+            "description": "WorkspaceName from sig_refresh_health"
+          },
+          {
+            "name": "OwnerUpn",
+            "description": "OwnerUpn from sig_refresh_health"
+          },
+          {
+            "name": "SignalType",
+            "description": "SignalType from sig_refresh_health"
+          },
+          {
+            "name": "LastErrorMessage",
+            "description": "LastErrorMessage from sig_refresh_health"
+          },
+          {
+            "name": "ConsecutiveFailures",
+            "description": "ConsecutiveFailures from sig_refresh_health"
+          }
+        ]
+      }
+    },
+    "identity": {
+      "sponsor": "admin@M365x13431207.onmicrosoft.com"
+    }
+  },
+  "shouldRun": false
+}

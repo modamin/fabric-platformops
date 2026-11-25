@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Reflex",
+    "displayName": "act_ops_notify",
+    "description": "Holds the Power Automate connection for operations agent notify actions (FUAM Ops)."
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "d706892a-6ab3-9acc-42e8-58ed276254f4"
+  }
+}

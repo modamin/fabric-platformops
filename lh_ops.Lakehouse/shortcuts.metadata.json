@@ -1,0 +1,218 @@
+[
+  {
+    "name": "fuam_workspaces",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/workspaces",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_semantic_models",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/semantic_models",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_reports",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/reports",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_pipelines",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/pipelines",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_notebooks",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/notebooks",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_lakehouses",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/lakehouses",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_dataflows",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dataflows",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_dashboards",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/dashboards",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_capacity_refreshables",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/capacity_refreshables",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_capacity_refreshable_summaries",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/capacity_refreshable_summaries",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_capacity_refreshable_details",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/capacity_refreshable_details",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_capacity_metrics_by_timepoint",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/capacity_metrics_by_timepoint",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_capacity_metrics_by_item_kind_by_day",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/capacity_metrics_by_item_kind_by_day",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_capacity_metrics_by_item_by_operation_by_day",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/capacity_metrics_by_item_by_operation_by_day",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_capacities",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/capacities",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_aggregated_activities_last_30days",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/aggregated_activities_last_30days",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_activities",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/activities",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  },
+  {
+    "name": "fuam_active_items",
+    "path": "/Tables/dbo",
+    "target": {
+      "type": "OneLake",
+      "oneLake": {
+        "path": "Tables/active_items",
+        "itemId": "2115b62b-c081-4cde-9b88-0b80bee32a23",
+        "workspaceId": "06030b22-7a67-40c3-995e-a38ea49a6555"
+      }
+    }
+  }
+]

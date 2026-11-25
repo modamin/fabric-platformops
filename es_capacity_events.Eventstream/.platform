@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Eventstream",
+    "displayName": "es_capacity_events",
+    "description": "Real-time capacity overview and operation events into kql_ops.raw_capacity_events (FUAM Ops UC1)."
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "700e893a-f44d-b405-4b92-d82bc79c2add"
+  }
+}
